@@ -11,8 +11,26 @@ endif()
 
 project ("UniversalDriver")
 
+# Set the path to the HIDAPI include directory and library file
+set(HIDAPI_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/external/hidapi/include")
+#set(HIDAPI_LIBRARY "${CMAKE_SOURCE_DIR}/hidapi/x64/hidapi.lib")
+
+if (WIN32)
+    set(HIDAPI_LIBRARY "${CMAKE_SOURCE_DIR}/external/hidapi/x64/hidapi.lib")
+elseif (UNIX)
+    set(HIDAPI_LIBRARY "${CMAKE_SOURCE_DIR}/external/hidapi/lib/libhidapi.so")
+endif()
+
 # Add source to this project's executable.
-add_executable (UniversalDriver "UniversalDriver.cpp" "UniversalDriver.h" "DeviceMonitor.h" "WindowsDeviceMonitor.h" "USBDeviceMonitorWindows.cpp" "USBDeviceMonitor.cpp" "USBDeviceMonitor.h" "USBDeviceMonitorWindows.h")
+if (WIN32)
+    add_executable (UniversalDriver "UniversalDriver.cpp" "UniversalDriver.h" "DeviceMonitor.h"  "USBDeviceMonitorWindows.cpp" "USBDeviceMonitor.cpp" "USBDeviceMonitor.h" "USBDeviceMonitorWindows.h" "USBDeviceMonitorFactory.h" "USBDeviceMonitorFactory.cpp")
+elseif (UNIX)
+    add_executable (UniversalDriver "UniversalDriver.cpp" "UniversalDriver.h" "DeviceMonitor.h"  "USBDeviceMonitorWindows.cpp" "USBDeviceMonitor.cpp" "USBDeviceMonitor.h" "USBDeviceMonitorWindows.h" "USBDeviceMonitorLinux.h" "USBDeviceMonitorLinux.cpp")
+endif()
+
+
+# Link HIDAPI library
+target_link_libraries(UniversalDriver PRIVATE ${HIDAPI_LIBRARY})
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET UniversalDriver PROPERTY CXX_STANDARD 20)

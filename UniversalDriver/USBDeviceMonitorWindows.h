@@ -6,9 +6,10 @@
 */
 #include "USBDeviceMonitor.h"
 #include <windows.h>
+#include <Dbt.h>
 #include <thread>
 #include <atomic>
-#include "hidapi/hidapi.h"
+#include "external/hidapi/include/hidapi.h"
 
 
 class USBDeviceMonitorWindows :public USBDeviceMonitor

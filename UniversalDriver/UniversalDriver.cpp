@@ -3,7 +3,7 @@
 
 #include "UniversalDriver.h"
 
-using namespace std;
+//using namespace std;
 
 void appSelfhelpMenu()
 {
@@ -43,6 +43,14 @@ void appSelfhelpMenu()
 
 int main()
 {
+	try
+	{
+		std::unique_ptr<USBDeviceMonitor> deviceMonitor1(USBDeviceMonitorFactory::Create());
+		//std::unique_ptr<USBDeviceMonitor> deviceMonitor = std::make_unique(USBDeviceMonitorFactory::Create());
+	}
+	catch (std::exception ex) {
+		std::cout << "Exception occurred: " << ex.what() << std::endl;
+	}
 	appSelfhelpMenu();
 
 	return 0;
