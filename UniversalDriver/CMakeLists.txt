@@ -12,25 +12,36 @@ endif()
 project ("UniversalDriver")
 
 # Set the path to the HIDAPI include directory and library file
-set(HIDAPI_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/external/hidapi/include")
 #set(HIDAPI_LIBRARY "${CMAKE_SOURCE_DIR}/hidapi/x64/hidapi.lib")
 
 if (WIN32)
-    set(HIDAPI_LIBRARY "${CMAKE_SOURCE_DIR}/external/hidapi/x64/hidapi.lib")
+  set(HIDAPI_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/external/hidapi/include")
+  set(HIDAPI_LIBRARY "${CMAKE_SOURCE_DIR}/external/hidapi/x64/hidapi.lib")
 elseif (UNIX)
-    set(HIDAPI_LIBRARY "${CMAKE_SOURCE_DIR}/external/hidapi/lib/libhidapi.so")
+  #include_directories(${HIDAPI_INCLUDE_DIRS})
+  #set(HIDAPI_LIBRARY "${CMAKE_SOURCE_DIR}/external/hidapi/lib/libhidapi.so")
+  # Locate the libudev package using pkg-config
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(UDEV REQUIRED libudev)
+  pkg_check_modules(HIDAPI REQUIRED hidapi-hidraw)
+  # Include directories for libudev
+  include_directories(${UDEV_INCLUDE_DIRS})
 endif()
 
 # Add source to this project's executable.
 if (WIN32)
     add_executable (UniversalDriver "UniversalDriver.cpp" "UniversalDriver.h" "DeviceMonitor.h"  "USBDeviceMonitorWindows.cpp" "USBDeviceMonitor.cpp" "USBDeviceMonitor.h" "USBDeviceMonitorWindows.h" "USBDeviceMonitorFactory.h" "USBDeviceMonitorFactory.cpp")
 elseif (UNIX)
-    add_executable (UniversalDriver "UniversalDriver.cpp" "UniversalDriver.h" "DeviceMonitor.h"  "USBDeviceMonitorWindows.cpp" "USBDeviceMonitor.cpp" "USBDeviceMonitor.h" "USBDeviceMonitorWindows.h" "USBDeviceMonitorLinux.h" "USBDeviceMonitorLinux.cpp")
+    add_executable (UniversalDriver "UniversalDriver.cpp" "UniversalDriver.h" "DeviceMonitor.h" "USBDeviceMonitor.cpp" "USBDeviceMonitor.h" "USBDeviceMonitorLinux.h" "USBDeviceMonitorLinux.cpp" "USBDeviceMonitorFactory.h" "USBDeviceMonitorFactory.cpp")
 endif()
 
 
 # Link HIDAPI library
-target_link_libraries(UniversalDriver PRIVATE ${HIDAPI_LIBRARY})
+if (WIN32)
+  target_link_libraries(UniversalDriver PRIVATE ${HIDAPI_LIBRARY})
+elseif(UNIX)
+  target_link_libraries(UniversalDriver PRIVATE hidapi-hidraw PRIVATE udev)
+endif()
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET UniversalDriver PROPERTY CXX_STANDARD 20)

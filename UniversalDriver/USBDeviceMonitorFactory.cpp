@@ -5,6 +5,8 @@
     #include "USBDeviceMonitorWindows.h"
 #elif defined(__linux__)
     #include "USBDeviceMonitorLinux.h"
+#elif defined(__unix__)
+    #include "USBDeviceMonitorLinux.h"
 #else
     // curretly support only Windows and Linux platforms. This can be extend based ont he platform.
     #error "Unsupported platform"
@@ -16,6 +18,8 @@ USBDeviceMonitor* USBDeviceMonitorFactory::Create() {
 #ifdef _WIN32
     return new USBDeviceMonitorWindows();
 #elif defined(__linux__)
+    return new USBDeviceMonitorLinux();
+#elif defined(__unix__)
     return new USBDeviceMonitorLinux();
 #else
     return nullptr; // Unsupported platform

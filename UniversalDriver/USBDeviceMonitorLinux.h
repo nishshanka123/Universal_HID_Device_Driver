@@ -12,13 +12,13 @@
 #include <libudev.h>
 #include <atomic>
 
-class USBDeviceMonitorLinux :USBDeviceMonitor {
+class USBDeviceMonitorLinux :public USBDeviceMonitor {
 public:
 	USBDeviceMonitorLinux();
 	virtual ~USBDeviceMonitorLinux() override;
 
-	void start override();
-	void stop override();
+	void start() override;
+	void stop() override;
 
 private:
 	struct udev* udev_udev;
