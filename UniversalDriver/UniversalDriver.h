@@ -9,6 +9,7 @@
 #include <exception>
 
 #include "USBDeviceMonitorFactory.h"
+#include "DeviceMonitor.h"
 
 // TODO: Reference additional headers your program requires here.
 
