@@ -44,7 +44,7 @@ message(LIBUSB_INCLUDE_DIR= ${LIBUSB_INCLUDE_DIR})
 
 # Add source to the project's executable.
 if (WIN32)
-    add_executable (UniversalDriver "UniversalDriver.cpp" "UniversalDriver.h" "DeviceMonitor.h"  "USBDeviceMonitorWindows.cpp" "USBDeviceMonitor.cpp" "USBDeviceMonitor.h" "USBDeviceMonitorWindows.h" "USBDeviceMonitorFactory.h" "USBDeviceMonitorFactory.cpp" "DeviceMonitor.cpp")
+    add_executable (UniversalDriver "UniversalDriver.cpp" "UniversalDriver.h" "DeviceMonitor.h"  "USBDeviceMonitorWindows.cpp" "USBDeviceMonitor.cpp" "USBDeviceMonitor.h" "USBDeviceMonitorWindows.h" "USBDeviceMonitorFactory.h" "USBDeviceMonitorFactory.cpp" "DeviceMonitor.cpp"  "USBDeviceMonitorGeneric.h" "USBDeviceMonitorGeneric.cpp")
 elseif (UNIX)
     add_executable (UniversalDriver "UniversalDriver.cpp" "UniversalDriver.h" "DeviceMonitor.h" "USBDeviceMonitor.cpp" "USBDeviceMonitor.h" "USBDeviceMonitorLinux.h" "USBDeviceMonitorLinux.cpp" "USBDeviceMonitorFactory.h" "USBDeviceMonitorFactory.cpp")
 endif()

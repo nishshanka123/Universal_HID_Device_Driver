@@ -1,4 +1,5 @@
 #include "USBDeviceMonitorFactory.h"
+#include "USBDeviceMonitorGeneric.h"
 
 // Include the relavant header file based on the platform.
 #ifdef _WIN32
@@ -16,7 +17,8 @@
 USBDeviceMonitor* USBDeviceMonitorFactory::Create() {
 // return the platform object accordingly.
 #ifdef _WIN32
-    return new USBDeviceMonitorWindows();
+    //return new USBDeviceMonitorWindows();
+    return new USBDeviceMonitorGeneric();
 #elif defined(__linux__)
     return new USBDeviceMonitorLinux();
 #elif defined(__unix__)
