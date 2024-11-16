@@ -16,7 +16,7 @@ USBDeviceMonitorGeneric::~USBDeviceMonitorGeneric() {
 
 void USBDeviceMonitorGeneric::start() {
 	is_running = true;
-	std::cout << "Start device monitoring...1" << std::endl;
+	std::cout << std::endl << "Start device monitoring..." << std::endl;
 	try
 	{
 		monitor_thread = std::thread(&USBDeviceMonitorGeneric::monitorLoop, this);
@@ -28,7 +28,7 @@ void USBDeviceMonitorGeneric::start() {
 
 void USBDeviceMonitorGeneric::stop() {
 	is_running = false;
-	std::cout << "Stop device monitoring" << std::endl;
+	std::cout << std::endl << "Stop device monitoring" << std::endl;
 	try {
 		if (monitor_thread.joinable()) {
 			monitor_thread.join();

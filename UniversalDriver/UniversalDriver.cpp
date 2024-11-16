@@ -14,12 +14,13 @@ void appSelfhelpMenu(const std::unique_ptr<USBDeviceMonitor> dMonitor = nullptr)
 		std::cout << "=========================================" << std::endl;
 		std::cout << "== Platform Independent USB HID Driver ==" << std::endl;
 		std::cout << "=========================================" << std::endl;
-		std::cout << "== 1 - Start device monitoring" << std::endl;
-		std::cout << "== 2 - Stop device monitoring" << std::endl;
-		std::cout << "== 3 - Add device search criteria" << std::endl;
-		std::cout << "== 4 - View device search criteria" << std::endl;
-		std::cout << "== 5 - Connect with device" << std::endl;
-		std::cout << "== 0 - Quit...:)." << std::endl;
+		std::cout << "== 1 - Start device monitoring          =" << std::endl;
+		std::cout << "== 2 - Stop device monitoring           =" << std::endl;
+		std::cout << "== 3 - Add device search criteria       =" << std::endl;
+		std::cout << "== 4 - View device search criteria      =" << std::endl;
+		std::cout << "== 5 - Connect with device              =" << std::endl;
+		std::cout << "=========================================" << std::endl;
+		std::cout << "== 0 - Quit...:).                       =" << std::endl;
 		std::cout << "== Enter menu ID : " << std::endl;
 
 		std::cin >> choice;
@@ -68,11 +69,12 @@ void appSelfhelpMenu(const std::unique_ptr<USBDeviceMonitor> dMonitor = nullptr)
 				std::cout << "=========================================" << std::endl;
 				std::cout << "== Connect with device ==================" << std::endl;
 				std::cout << "=========================================" << std::endl;
-				std::cout << "== 1 - Read data from device" << std::endl;
-				std::cout << "== 2 - Beeb the device" << std::endl;
-				std::cout << "== 3 - Tern LED OFF" << std::endl;
-				std::cout << "== 5 - Connect with device" << std::endl;
-				std::cout << "== 0 - Quit to main menu" << std::endl;
+				std::cout << "== 1 - Read data from device            =" << std::endl;
+				std::cout << "== 2 - Beeb the device                  =" << std::endl;
+				std::cout << "== 3 - Tern LED OFF                     =" << std::endl;
+				std::cout << "== 5 - Connect with device              =" << std::endl;
+				std::cout << "== 0 - Quit to main menu                =" << std::endl;
+				std::cout << "=========================================" << std::endl;
 				std::cout << "== Enter menu ID : " << std::endl;
 
 				std::cin >> sub_choice;
