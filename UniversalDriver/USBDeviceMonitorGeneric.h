@@ -2,7 +2,7 @@
 #define USB_DEVICE_MONITOR_GENERIC_H
 
 #include "USBDeviceMonitor.h"
-#include "external/libusb-1.0.24/include/libusb-1.0/libusb.h"
+#include "external/libusb-1.0.27/include/libusb.h"
 #include <iostream>
 #include <thread>
 #include <atomic>

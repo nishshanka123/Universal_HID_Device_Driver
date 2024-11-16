@@ -2,7 +2,7 @@
 //
 
 #include "UniversalDriver.h"
-#include "external/libusb-1.0.24/include/libusb-1.0/libusb.h"
+#include "external/libusb-1.0.27/include/libusb.h"
 
 //using namespace std;
 

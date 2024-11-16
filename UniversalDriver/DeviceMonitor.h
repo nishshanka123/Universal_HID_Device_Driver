@@ -7,7 +7,7 @@
 #ifndef DEVICE_MONITOR_H
 #define DEVICE_MONITOR_H
 
-#include "external/libusb-1.0.24/include/libusb-1.0/libusb.h"
+#include "external/libusb-1.0.27/include/libusb.h"
 #include <iostream>
 #include <thread>
 #include <atomic>

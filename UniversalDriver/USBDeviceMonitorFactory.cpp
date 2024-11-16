@@ -20,9 +20,11 @@ USBDeviceMonitor* USBDeviceMonitorFactory::Create() {
     //return new USBDeviceMonitorWindows();
     return new USBDeviceMonitorGeneric();
 #elif defined(__linux__)
-    return new USBDeviceMonitorLinux();
+    //return new USBDeviceMonitorLinux();
+    return new USBDeviceMonitorGeneric();
 #elif defined(__unix__)
-    return new USBDeviceMonitorLinux();
+    //return new USBDeviceMonitorLinux();
+    return new USBDeviceMonitorGeneric();
 #else
     return nullptr; // Unsupported platform
 #endif
