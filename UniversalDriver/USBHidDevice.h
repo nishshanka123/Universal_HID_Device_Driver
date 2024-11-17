@@ -14,13 +14,18 @@
 class USBHidDevice
 {
 private:
-	int vendorId;
-	int productId;
-	bool is_open;
+	uint16_t vendorId;
+	uint16_t productId;
+	bool isOpen;
+	std::thread dataRecieveThread;
+	std::atomic<bool> isInprogress;
+	hid_device* hidDeviceHandler;
+	std::function<void(const std::vector<uint8_t>&)> dataCallback;
+
 public:
 	// C/Dtors
 	USBHidDevice();
-	USBHidDevice(int pid, int vid);
+	USBHidDevice(uint16_t pid, uint16_t vid);
 	virtual ~USBHidDevice();
 
 	// member functions
@@ -42,22 +47,28 @@ public:
 	/**
 	* Send data to device, wrapping for hid write call.
 	*/
-	bool sendData();
+	void sendData(std::vector<uint8_t>& data);
 
 	/**
 	* Method to receive data from device, call hid read API
 	*/
-	bool recieveData();
+	void recieveData(std::vector<uint8_t>& data);
 
 	/**
 	* Start data reading from the device
 	*/
-	void startRecieving();
+	void startRecieving(std::function<void(const std::vector<uint8_t>&)>& callback);
 	
 	/**
 	* Stop data reading
 	*/
 	void stopRecieving();
+
+	/**
+	* write a receive worker function to seperate the reading thread from data processing
+	* specially for serperation of consern.
+	*/
+	void receiveWorker();
 
 };
 #endif // !INCLUDE_USB_HID_DEVICE_H
