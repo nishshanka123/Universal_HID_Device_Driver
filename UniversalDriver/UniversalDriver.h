@@ -10,6 +10,7 @@
 
 #include "USBDeviceMonitorFactory.h"
 #include "DeviceMonitor.h"
+#include "USBHidDevice.h"
 
 // TODO: Reference additional headers your program requires here.
 

@@ -2,6 +2,9 @@
 #define USB_DEVICE_MONITOR_H
 
 #include <string>
+#include <exception>
+#include <fstream>
+#include <iostream>
 
 /**
 * Purpose:
@@ -15,10 +18,11 @@ public:
 	//pure virtual functions for derived classes
 	virtual void start() = 0;
 	virtual void stop() = 0;
+	std::string getConfiguration(std::string fileName);
+	void createDeviceConfiguration(std::string fileName, std::string config);
 protected:
-	void EnumerateDevices();
-	std::string getConfiguration();
-	void createDeviceConfiguration(std::string config);
+	//void EnumerateDevices();
+	
 };
 
 #endif // end of USB_DEVICE_MONITOR_H

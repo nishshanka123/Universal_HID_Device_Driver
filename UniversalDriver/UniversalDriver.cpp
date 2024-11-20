@@ -4,14 +4,21 @@
 #include "UniversalDriver.h"
 #include "external/libusb-1.0.27/include/libusb.h"
 
-//using namespace std;
+//USBHidDevice* createHidDevice(uint8_t vid, uint8_t pid) {
+//	USBHidDevice* hidDevice = new USBHidDevice(vid, pid);
+//
+//}
+
+// global variables for the application.
+
 
 void appSelfhelpMenu(const std::unique_ptr<USBDeviceMonitor> dMonitor = nullptr)
 {
 	int choice = 1;
+	std::string config_file = "device.config";
 	while (choice != 0)
 	{
-		std::cout << "=========================================" << std::endl;
+		std::cout << std::endl << "=========================================" << std::endl;
 		std::cout << "== Platform Independent USB HID Driver ==" << std::endl;
 		std::cout << "=========================================" << std::endl;
 		std::cout << "== 1 - Start device monitoring          =" << std::endl;
@@ -19,6 +26,8 @@ void appSelfhelpMenu(const std::unique_ptr<USBDeviceMonitor> dMonitor = nullptr)
 		std::cout << "== 3 - Add device search criteria       =" << std::endl;
 		std::cout << "== 4 - View device search criteria      =" << std::endl;
 		std::cout << "== 5 - Connect with device              =" << std::endl;
+		std::cout << "== 6 - Send commands to device          =" << std::endl;
+		std::cout << "== 9 - Main Menu                        =" << std::endl;
 		std::cout << "=========================================" << std::endl;
 		std::cout << "== 0 - Quit...:).                       =" << std::endl;
 		std::cout << "== Enter menu ID : " << std::endl;
@@ -52,19 +61,37 @@ void appSelfhelpMenu(const std::unique_ptr<USBDeviceMonitor> dMonitor = nullptr)
 			std::string vid_pid;
 			std::cout << "Enter device search criteria (VID and PID in VID:PID format):";
 			std::cin >> vid_pid;
+			
+			if (dMonitor) {
+				dMonitor->createDeviceConfiguration(config_file, vid_pid);
+			}
 			break;
 		}
 		case 4: {
 			if (dMonitor) {
-				//std::cout << "Current device search criteria (VID:PID): " << dMonitor->getConfiguration() << std::endl;
-				;
+				std::cout << "Current device search criteria (VID:PID): " << dMonitor->getConfiguration(config_file) << std::endl;
+				std::cout << std::endl;
 			}
 			break;
 		}
 		case 5: {
-			int sub_choice = 0, device_id = 0;
+			std::string vid_pid = dMonitor->getConfiguration(config_file);
+			std::cout << "vid: " << std::stoi(vid_pid.substr(0, (vid_pid.find(":") + 1))) << "pid: " << std::stoi(vid_pid.substr(vid_pid.find(":") + 1, (vid_pid.length() - vid_pid.find(":") + 1) )) << std::endl;
+			uint16_t vid = std::stoi(vid_pid.substr(0, (vid_pid.find(":") + 1)));
+			uint16_t pid = std::stoi(vid_pid.substr(vid_pid.find(":") + 1, (vid_pid.length() - vid_pid.find(":") + 1)));
+
+			//USBHidDevice hidDevice1();
+			//hidDevice = new USBHidDevice(pid, vid);
+			//delete hidDevice;
+
+			std::cout << "vid: " << /*std::hex <<*/ vid << " pid: " << /*std::hex <<*/ pid << std::endl;
+			break;
+		}
+		case 6: {
+			int sub_choice = 100, device_id = 0;
 			std::cout << "Enter device ID: ";
 			std::cin >> device_id;
+
 			while (sub_choice != 0) {
 				std::cout << "=========================================" << std::endl;
 				std::cout << "== Connect with device ==================" << std::endl;
@@ -86,6 +113,21 @@ void appSelfhelpMenu(const std::unique_ptr<USBDeviceMonitor> dMonitor = nullptr)
 					break;
 				}
 			}
+			break;
+		}
+		case 9: {
+			std::cout << "=========================================" << std::endl;
+			std::cout << "== Platform Independent USB HID Driver ==" << std::endl;
+			std::cout << "=========================================" << std::endl;
+			std::cout << "== 1 - Start device monitoring          =" << std::endl;
+			std::cout << "== 2 - Stop device monitoring           =" << std::endl;
+			std::cout << "== 3 - Add device search criteria       =" << std::endl;
+			std::cout << "== 4 - View device search criteria      =" << std::endl;
+			std::cout << "== 5 - Connect with device              =" << std::endl;
+			std::cout << "=========================================" << std::endl;
+			std::cout << "== 0 - Quit...:).                       =" << std::endl;
+			std::cout << "== Enter menu ID : " << std::endl;
+			break;
 		}
 		case 0:
 			std::cout << "Quiting.." << std::endl;
@@ -103,7 +145,7 @@ void appSelfhelpMenu(const std::unique_ptr<USBDeviceMonitor> dMonitor = nullptr)
 			break;
 		}
 
-		std::cout << "=========================================" << std::endl;
+		std::cout << std::endl << "=========================================" << std::endl;
 	}
 }
 
@@ -182,6 +224,7 @@ void appSelfhelpMenu(const std::unique_ptr<DeviceMonitor> dMonitor = nullptr)
 
 int main()
 {
+	USBHidDevice* hidDevice = new USBHidDevice();
 	// Platform specific approach with cross compilable implementation.
 	try
 	{

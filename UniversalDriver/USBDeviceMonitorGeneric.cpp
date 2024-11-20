@@ -101,7 +101,7 @@ std::set<std::string> USBDeviceMonitorGeneric::getConnectedDevices() {
 			std::cout << "  iSerialNumber: " << static_cast<int>(desc.iSerialNumber) << std::endl;
 			std::cout << "  bNumConfigurations: " << static_cast<int>(desc.bNumConfigurations) << std::endl;*/
 
-			std::string device_id = std::to_string(x+1) + ":" + std::to_string(desc.idVendor) + ":" + std::to_string(desc.idProduct);
+			std::string device_id = /*std::to_string(x + 1) + ":" + */std::to_string(desc.idVendor) + ":" + std::to_string(desc.idProduct);
 			device_set.insert(device_id);			
 		}
 		else {

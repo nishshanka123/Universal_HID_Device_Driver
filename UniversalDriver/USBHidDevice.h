@@ -10,6 +10,7 @@
 #include <vector>
 #include <atomic>
 #include <functional>
+#include <array>
 
 class USBHidDevice
 {
@@ -52,7 +53,7 @@ public:
 	/**
 	* Method to receive data from device, call hid read API
 	*/
-	void recieveData(std::vector<uint8_t>& data);
+	size_t recieveData(std::vector<uint8_t>& data);
 
 	/**
 	* Start data reading from the device

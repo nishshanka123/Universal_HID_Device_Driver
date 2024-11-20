@@ -13,7 +13,8 @@ USBHidDevice::USBHidDevice(uint16_t pid, uint16_t vid) :productId(pid), vendorId
 }
 
 USBHidDevice::~USBHidDevice() {
-
+	stopRecieving();
+	closeDevice();
 }
 
 bool USBHidDevice::initializeDevice() {
@@ -27,7 +28,7 @@ bool USBHidDevice::initializeDevice() {
 	hidDeviceHandler = hid_open(vendorId, productId, nullptr);
 	if (!hidDeviceHandler)
 	{
-		throw std::exception("Failed to open hid device for the device with vendor id = %x and product id = %x", vendorId, productId);
+		throw std::exception("Failed to open hid device for the device with given vendor ID and Product ID");
 	}
 
 	isOpen = true;
@@ -61,19 +62,21 @@ void USBHidDevice::sendData(std::vector<uint8_t>& data) {
 	}
 
 	// default report ID set to 0, first set all bytes to 0
-	std::vector<uint8_t> outputReport(data.size() + 1, 0);
+	std::vector<unsigned char> outputReport(data.size() + 1, 0);
+	//std::vector<unsigned char>oReport(data.size() + 1);
 	std::copy(data.begin(), data.end(), outputReport.begin() + 1);
 	
-	int size = hid_write(hidDeviceHandler, outputReport, outputReport.size());
+	size_t size = hid_write(hidDeviceHandler, outputReport.data(), outputReport.size());
 	if (size < 0) {
-		throw std::exception("Failed to write to HID device: %s", hid_error(hidDeviceHandler));
+		//throw std::exception("Failed to write to HID device: %s", hid_error(hidDeviceHandler));
+		throw std::exception("Failed to write to HID device");
 	}
 }
 
 
-void USBHidDevice::recieveData(std::vector<uint8_t>& data) {
+size_t USBHidDevice::recieveData(std::vector<uint8_t>& data) {
 	if (!isOpen) {
-		throw std::exception("HID Device is not open for data reading.")
+		throw std::exception("HID Device is not open for data reading.");
 	}
 
 	// allocate the buffer size for data reading. this is the input report size of the device.
@@ -81,11 +84,13 @@ void USBHidDevice::recieveData(std::vector<uint8_t>& data) {
 	int readTimeOut = 1000; // read timeout in ms
 
 	// do nonblocking reading
-	size_t readSize = hid_read_timeout(hidDeviceHandler, data, data.size(), readTimeOut);
+	size_t readSize = hid_read_timeout(hidDeviceHandler, data.data(), data.size(), readTimeOut);
 	if (readSize < 0) {
-		throw std::exception("HID data read error %s", hid_error(hidDeviceHandler));
+		//throw std::exception("HID data read error %s", hid_error(hidDeviceHandler));
+		throw std::exception("HID data read error");
 	}
 	// print the data.
+	return readSize;
 }
 
 void USBHidDevice::startRecieving(std::function<void(const std::vector<uint8_t>&)>& callback) {
@@ -94,7 +99,7 @@ void USBHidDevice::startRecieving(std::function<void(const std::vector<uint8_t>&
 	}
 
 	if (!isOpen) {
-		throw std::exception("Unable to start reading, device not opened")
+		throw std::exception("Unable to start reading, device not opened");
 	}
 
 	dataCallback = callback;
@@ -113,10 +118,14 @@ void USBHidDevice::startRecieving(std::function<void(const std::vector<uint8_t>&
 
 void USBHidDevice::receiveWorker() {
 	while (isInprogress) {
-		std::vector<uint8_t> recieveData;
+		std::vector<uint8_t> rData;
+		size_t recvSize = 0;
 		try {
-			if (recieveData(recieveData)) {
-
+			recvSize = recieveData(rData);
+			if (recvSize > 0) {
+				if (dataCallback) {
+					dataCallback(rData);
+				}
 			}
 		}
 		catch (std::exception& ex) {
