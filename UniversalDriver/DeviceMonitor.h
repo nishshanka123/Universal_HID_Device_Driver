@@ -4,6 +4,38 @@
 * notify the interesting devices to the applications
 * 
 */
-#pragma once
+#ifndef DEVICE_MONITOR_H
+#define DEVICE_MONITOR_H
 
+#include "external/libusb-1.0.27/include/libusb.h"
 #include <iostream>
+#include <thread>
+#include <atomic>
+#include <vector>
+#include <chrono>
+#include <set>
+#include <fstream>
+#include <map>
+#include <string>
+
+class DeviceMonitor {
+public:
+    DeviceMonitor();
+    ~DeviceMonitor();
+    void start();
+    void stop();
+    void EnumerateDevices();
+    std::string getConfiguration();
+    void createDeviceConfiguration(std::string config);
+
+private:
+    void MonitorLoop();
+    std::set<std::string> GetConnectedDevices();
+    std::map<std::string, std::string> deviceConfig;
+
+    std::atomic<bool> is_running;
+    std::thread monitor_thread;
+    libusb_context* ctx;
+};
+
+#endif

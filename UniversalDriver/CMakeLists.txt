@@ -17,6 +17,7 @@ project ("UniversalDriver")
 if (WIN32)
   set(HIDAPI_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/external/hidapi/include")
   set(HIDAPI_LIBRARY "${CMAKE_SOURCE_DIR}/external/hidapi/x64/hidapi.lib")
+  include_directories(${HIDAPI_INCLUDE_DIRS})
 elseif (UNIX)
   #include_directories(${HIDAPI_INCLUDE_DIRS})
   #set(HIDAPI_LIBRARY "${CMAKE_SOURCE_DIR}/external/hidapi/lib/libhidapi.so")
@@ -24,23 +25,41 @@ elseif (UNIX)
   find_package(PkgConfig REQUIRED)
   pkg_check_modules(UDEV REQUIRED libudev)
   pkg_check_modules(HIDAPI REQUIRED hidapi-hidraw)
+  
   # Include directories for libudev
   include_directories(${UDEV_INCLUDE_DIRS})
 endif()
 
-# Add source to this project's executable.
+# include and link libusb library
+#external\libusb-1.0.27\VS2022\MS64\dll
+    
 if (WIN32)
-    add_executable (UniversalDriver "UniversalDriver.cpp" "UniversalDriver.h" "DeviceMonitor.h"  "USBDeviceMonitorWindows.cpp" "USBDeviceMonitor.cpp" "USBDeviceMonitor.h" "USBDeviceMonitorWindows.h" "USBDeviceMonitorFactory.h" "USBDeviceMonitorFactory.cpp")
+    set(LIBUSB_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/external/libusb-1.0.27/include/libusb-1.0")
+    set(LIBUSB_LIBRARY "${CMAKE_SOURCE_DIR}/external/libusb-1.0.27/VS2022/MS64/dll/libusb-1.0.lib")    
 elseif (UNIX)
-    add_executable (UniversalDriver "UniversalDriver.cpp" "UniversalDriver.h" "DeviceMonitor.h" "USBDeviceMonitor.cpp" "USBDeviceMonitor.h" "USBDeviceMonitorLinux.h" "USBDeviceMonitorLinux.cpp" "USBDeviceMonitorFactory.h" "USBDeviceMonitorFactory.cpp")
+    #set(LIBUSB_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/external/libusb-1.0.27/include/libusb-1.0")
+    pkg_check_modules(LIBUSB REQUIRED libusb-1.0)
+    #include_directories(${LIBUSB_INCLUDE_DIRS})
+    #set(LIBUSB_LIBRARY "${CMAKE_SOURCE_DIR}/external/libusb-1.0.27/VS2022/MS64/dll/libusb-1.0.so")
+    message("LIBUSB_LIBRARY: ${LIBUSB_LIBRARIES}")
+
+endif()
+message(LIBUSB_LIBRARY= ${LIBUSB_LIBRARY})
+message(LIBUSB_INCLUDE_DIR= ${LIBUSB_INCLUDE_DIR})
+
+# Add source to the project's executable.
+if (WIN32)
+    add_executable (UniversalDriver "UniversalDriver.cpp" "UniversalDriver.h" "DeviceMonitor.h"  "USBDeviceMonitorWindows.cpp" "USBDeviceMonitor.cpp" "USBDeviceMonitor.h" "USBDeviceMonitorWindows.h" "USBDeviceMonitorFactory.h" "USBDeviceMonitorFactory.cpp" "DeviceMonitor.cpp"  "USBDeviceMonitorGeneric.h" "USBDeviceMonitorGeneric.cpp" "USBHidDevice.h" "USBHidDevice.cpp")
+elseif (UNIX)
+    add_executable (UniversalDriver "UniversalDriver.cpp" "UniversalDriver.h" "DeviceMonitor.h" "USBDeviceMonitor.cpp" "USBDeviceMonitor.h" "USBDeviceMonitorLinux.h" "USBDeviceMonitorLinux.cpp" "USBDeviceMonitorFactory.h" "USBDeviceMonitorFactory.cpp" "DeviceMonitor.cpp"  "USBDeviceMonitorGeneric.h" "USBDeviceMonitorGeneric.cpp" "USBHidDevice.h" "USBHidDevice.cpp")
 endif()
 
 
 # Link HIDAPI library
 if (WIN32)
-  target_link_libraries(UniversalDriver PRIVATE ${HIDAPI_LIBRARY})
+  target_link_libraries(UniversalDriver PRIVATE ${LIBUSB_LIBRARY} PRIVATE ${HIDAPI_LIBRARY} )
 elseif(UNIX)
-  target_link_libraries(UniversalDriver PRIVATE hidapi-hidraw PRIVATE udev)
+  target_link_libraries(UniversalDriver PRIVATE hidapi-hidraw PRIVATE udev PRIVATE ${LIBUSB_LIBRARIES})
 endif()
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
