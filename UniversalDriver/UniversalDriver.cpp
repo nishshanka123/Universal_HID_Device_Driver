@@ -80,7 +80,7 @@ void appSelfhelpMenu(const std::unique_ptr<USBDeviceMonitor> dMonitor = nullptr)
 			uint16_t vid = std::stoi(vid_pid.substr(0, (vid_pid.find(":") + 1)));
 			uint16_t pid = std::stoi(vid_pid.substr(vid_pid.find(":") + 1, (vid_pid.length() - vid_pid.find(":") + 1)));
 
-			//USBHidDevice hidDevice1();
+			USBHidDevice hidDevice(pid, vid);
 			//hidDevice = new USBHidDevice(pid, vid);
 			//delete hidDevice;
 
@@ -88,9 +88,10 @@ void appSelfhelpMenu(const std::unique_ptr<USBDeviceMonitor> dMonitor = nullptr)
 			break;
 		}
 		case 6: {
-			int sub_choice = 100, device_id = 0;
+			int sub_choice = 100;
+			std::string dev_id;
 			std::cout << "Enter device ID: ";
-			std::cin >> device_id;
+			std::cin >> dev_id;
 
 			while (sub_choice != 0) {
 				std::cout << "=========================================" << std::endl;
@@ -105,6 +106,7 @@ void appSelfhelpMenu(const std::unique_ptr<USBDeviceMonitor> dMonitor = nullptr)
 				std::cout << "== Enter menu ID : " << std::endl;
 
 				std::cin >> sub_choice;
+
 				switch (sub_choice)
 				{
 				case 0:

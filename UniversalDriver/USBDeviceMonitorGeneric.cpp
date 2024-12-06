@@ -16,7 +16,7 @@ USBDeviceMonitorGeneric::~USBDeviceMonitorGeneric() {
 
 void USBDeviceMonitorGeneric::start() {
 	is_running = true;
-	std::cout << std::endl << "Start device monitoring..." << std::endl;
+	//std::cout << std::endl << "Start device monitoring..." << std::endl;
 	try
 	{
 		monitor_thread = std::thread(&USBDeviceMonitorGeneric::monitorLoop, this);
@@ -43,11 +43,12 @@ void USBDeviceMonitorGeneric::stop() {
 * Monitor the device changes in a continuous loop
 */
 void USBDeviceMonitorGeneric::monitorLoop() {
-	std::set<std::string> previous_devices;
-	std::cout << "Start device monitoring..." << std::endl;
+	//std::set<std::string> previous_devices;
+	std::cout << std::endl << "Start device monitoring..." << std::endl << std::endl;
 	while (is_running)
 	{
-		std::set<std::string> current_devices = getConnectedDevices();
+		//std::set<std::string> current_devices = getConnectedDevices();
+		current_devices = getConnectedDevices();
 		// check for new devices connections
 		for (auto device : current_devices) {
 			if (previous_devices.find(device) == previous_devices.end())
@@ -100,7 +101,12 @@ std::set<std::string> USBDeviceMonitorGeneric::getConnectedDevices() {
 			std::cout << "  iProduct: " << static_cast<int>(desc.iProduct) << std::endl;
 			std::cout << "  iSerialNumber: " << static_cast<int>(desc.iSerialNumber) << std::endl;
 			std::cout << "  bNumConfigurations: " << static_cast<int>(desc.bNumConfigurations) << std::endl;*/
-
+			
+			// add vid, pid details in HEX format
+			//char vid[10], pid[10];
+			//sprintf(vid, "0x%x", desc.idVendor);
+			//sprintf(pid, "0x%x", desc.idProduct);
+			//std::cout << "vid:" << vid << "|pid:" << pid << std::endl;
 			std::string device_id = /*std::to_string(x + 1) + ":" + */std::to_string(desc.idVendor) + ":" + std::to_string(desc.idProduct);
 			device_set.insert(device_id);			
 		}

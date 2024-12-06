@@ -31,6 +31,9 @@ private:
 	std::thread monitor_thread;
 	libusb_context* ctx;
 
+	std::set<std::string> previous_devices;
+	std::set<std::string> current_devices;
+
 };
 
 #endif
