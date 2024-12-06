@@ -13,8 +13,10 @@ USBHidDevice::USBHidDevice(uint16_t pid, uint16_t vid) :productId(pid), vendorId
 }
 
 USBHidDevice::~USBHidDevice() {
+	std::cout << __func__ << "start" << std::endl;
 	stopRecieving();
 	closeDevice();
+	std::cout << __func__ << "end" << std::endl;
 }
 
 bool USBHidDevice::initializeDevice() {
@@ -93,7 +95,7 @@ size_t USBHidDevice::recieveData(std::vector<uint8_t>& data) {
 	return readSize;
 }
 
-void USBHidDevice::startRecieving(std::function<void(const std::vector<uint8_t>&)>& callback) {
+void USBHidDevice::startRecieving(const std::function<void(const std::vector<uint8_t>&)>& callback) {
 	if (isInprogress) {
 		throw std::exception("Data reading thread is already started.");
 	}
@@ -132,16 +134,19 @@ void USBHidDevice::receiveWorker() {
 			std::cout << "receiveWorker: Exception occurred: " << ex.what() << std::endl;
 			throw ex;
 		}
-
+		//std::cout << "Reading...1" << std::endl;
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		//std::cout << "Reading...2" << std::endl;
 	}
 }
 
 void USBHidDevice::stopRecieving() {
+	std::cout << __func__ << ":start" << std::endl;
 	if (isInprogress) {
 		isInprogress = false;
 		if (dataRecieveThread.joinable()) {
 			dataRecieveThread.join();
 		}
 	}
+	std::cout << __func__ << ":end" << std::endl;
 }

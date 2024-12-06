@@ -58,7 +58,7 @@ public:
 	/**
 	* Start data reading from the device
 	*/
-	void startRecieving(std::function<void(const std::vector<uint8_t>&)>& callback);
+	void startRecieving(const std::function<void(const std::vector<uint8_t>&)>& callback);
 	
 	/**
 	* Stop data reading

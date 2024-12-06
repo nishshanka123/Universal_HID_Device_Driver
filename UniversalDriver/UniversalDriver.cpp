@@ -4,13 +4,18 @@
 #include "UniversalDriver.h"
 #include "external/libusb-1.0.27/include/libusb.h"
 
-//USBHidDevice* createHidDevice(uint8_t vid, uint8_t pid) {
-//	USBHidDevice* hidDevice = new USBHidDevice(vid, pid);
-//
-//}
+// USBHidDevice for the application
+USBHidDevice* device = nullptr;
 
-// global variables for the application.
+// callback function to process the received data
+void processReceivedData(const std::vector<uint8_t>& data) {
+	std::cout << "Data received: ";
+	for (uint8_t element : data) {
+		std::cout << std::hex << std::setfill('0') << std::setw(2) << int(element);
+	}
+	std::cout << std::endl;
 
+}
 
 void appSelfhelpMenu(const std::unique_ptr<USBDeviceMonitor> dMonitor = nullptr)
 {
@@ -80,7 +85,17 @@ void appSelfhelpMenu(const std::unique_ptr<USBDeviceMonitor> dMonitor = nullptr)
 			uint16_t vid = std::stoi(vid_pid.substr(0, (vid_pid.find(":") + 1)));
 			uint16_t pid = std::stoi(vid_pid.substr(vid_pid.find(":") + 1, (vid_pid.length() - vid_pid.find(":") + 1)));
 
-			USBHidDevice hidDevice(pid, vid);
+			device = new USBHidDevice (pid, vid);
+			//device = hidDevice;
+			try {
+				if (device->initializeDevice()) {
+					std::cout << "Device connected and initialized..." << std::endl;
+					device->startRecieving(processReceivedData);
+				}
+			}
+			catch (std::exception& ex) {
+				std::cout << "Exception occurred: " << ex.what() << std::endl;
+			}
 			//hidDevice = new USBHidDevice(pid, vid);
 			//delete hidDevice;
 
@@ -264,5 +279,9 @@ int main()
 	//dMonitor->start();
 	//appSelfhelpMenu(std::move(dMonitor));
 
+	if (device) {
+		delete device;
+		device = nullptr;
+	}
 	return 0;
 }
