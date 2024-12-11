@@ -7,6 +7,7 @@
 #include <iostream>
 #include <memory>
 #include <exception>
+#include <iomanip>
 
 #include "USBDeviceMonitorFactory.h"
 #include "DeviceMonitor.h"

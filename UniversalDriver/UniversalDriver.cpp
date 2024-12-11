@@ -100,19 +100,26 @@ void appSelfhelpMenu(const std::unique_ptr<USBDeviceMonitor> dMonitor = nullptr)
 			//delete hidDevice;
 
 			std::cout << "vid: " << /*std::hex <<*/ vid << " pid: " << /*std::hex <<*/ pid << std::endl;
+			std::vector<uint8_t> command = {0x00, 0x08, 0x05, 0x00, 0x17, 0x70, 0x58, 0x02};
+			device->sendData(command);
 			break;
 		}
 		case 6: {
 			int sub_choice = 100;
-			std::string dev_id;
-			std::cout << "Enter device ID: ";
-			std::cin >> dev_id;
+			//std::string dev_id;
+			//std::cout << "Enter device ID: ";
+			//std::cin >> dev_id;
+			if(device) {
+				std::cout << "Connected device " << device->getDeviceInfo() << std::endl;
+			} else {
+				std::cout << "Please connect with a device first using option 5 in the main menu." << std::endl;
+			}
 
 			while (sub_choice != 0) {
 				std::cout << "=========================================" << std::endl;
 				std::cout << "== Connect with device ==================" << std::endl;
 				std::cout << "=========================================" << std::endl;
-				std::cout << "== 1 - Read data from device            =" << std::endl;
+				std::cout << "== 1 - Beeb the device                  =" << std::endl;
 				std::cout << "== 2 - Beeb the device                  =" << std::endl;
 				std::cout << "== 3 - Tern LED OFF                     =" << std::endl;
 				std::cout << "== 5 - Connect with device              =" << std::endl;
@@ -124,7 +131,17 @@ void appSelfhelpMenu(const std::unique_ptr<USBDeviceMonitor> dMonitor = nullptr)
 
 				switch (sub_choice)
 				{
-				case 0:
+				case 1:
+					{
+						std::vector<unsigned char> command = {0x00, 0x08, 0x05, 0x00, 0x17, 0x70, 0x58, 0x02};
+						if(device){
+							try{
+								device->sendData(command);
+							} catch (std::exception& ex) {
+								std::cout << "Exception occurred: " << ex.what() << std::endl;
+							}
+						}
+					}
 					break;
 				default:
 					break;
@@ -171,6 +188,7 @@ void appSelfhelpMenu(const std::unique_ptr<DeviceMonitor> dMonitor = nullptr)
 	int choice = 1;
 	while (choice != 0)
 	{
+		// add menu items for the console self help application.
 		std::cout << "=========================================" << std::endl;
 		std::cout << "== Platform Independent USB HID Driver ==" << std::endl;
 		std::cout << "=========================================" << std::endl;

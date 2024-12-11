@@ -11,6 +11,9 @@
 #include <atomic>
 #include <functional>
 #include <array>
+#include <string>
+#include <sstream>
+//#include <strstream>
 
 class USBHidDevice
 {
@@ -70,6 +73,11 @@ public:
 	* specially for serperation of consern.
 	*/
 	void receiveWorker();
+
+	/**
+	 * Get device info. Vendor ID and Product ID
+	 */
+	std::string getDeviceInfo();
 
 };
 #endif // !INCLUDE_USB_HID_DEVICE_H

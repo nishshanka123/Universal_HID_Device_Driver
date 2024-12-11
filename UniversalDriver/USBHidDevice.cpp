@@ -19,10 +19,16 @@ USBHidDevice::~USBHidDevice() {
 	std::cout << __func__ << "end" << std::endl;
 }
 
+std::string USBHidDevice::getDeviceInfo(){
+	std::stringstream ss;
+	ss << "VendorID=" << std::hex << vendorId << ":ProductID=" << std::hex << productId;
+	return ss.str();
+}
+
 bool USBHidDevice::initializeDevice() {
 	// initialize the hid library for device creation.
 	if (hid_init() != 0) {
-		throw std::exception("HID library initialization failed.");
+		throw std::runtime_error("HID library initialization failed.");
 	}
 
 	//open the hid device connection
@@ -30,7 +36,8 @@ bool USBHidDevice::initializeDevice() {
 	hidDeviceHandler = hid_open(vendorId, productId, nullptr);
 	if (!hidDeviceHandler)
 	{
-		throw std::exception("Failed to open hid device for the device with given vendor ID and Product ID");
+		std::cout << "hidDevHd: " << hidDeviceHandler << std::endl;
+		throw std::runtime_error("Failed to open hid device with given vendor ID and Product ID");
 	}
 
 	isOpen = true;
@@ -60,25 +67,36 @@ bool USBHidDevice::isDeviceOpen() {
 
 void USBHidDevice::sendData(std::vector<uint8_t>& data) {
 	if (!isOpen) {
-		throw std::exception("Device is not open for data writing.");
+		throw std::runtime_error("Device is not open for data writing.");
 	}
 
 	// default report ID set to 0, first set all bytes to 0
-	std::vector<unsigned char> outputReport(data.size() + 1, 0);
-	//std::vector<unsigned char>oReport(data.size() + 1);
-	std::copy(data.begin(), data.end(), outputReport.begin() + 1);
+	std::cout << "size of data; " << data.size() << std::endl;
+	std::vector<unsigned char> outputReport(data.size() + 5, 0);
+	// Default report ID is 0 for the output report
+	outputReport[0] = 0x00;
+	outputReport[1] = 0x30;
+	outputReport[2] = 0x50;
+	outputReport[3] = 0x40;
+	
+	std::copy(data.begin(), data.end(), outputReport.begin() + 4);
+	std::cout << "Feature report2: ";
+	for(int x=0; x<outputReport.size(); x++) {
+		printf("%2x ", outputReport[x]);
+	}
+	std::cout << std::endl;
 	
 	size_t size = hid_write(hidDeviceHandler, outputReport.data(), outputReport.size());
 	if (size < 0) {
 		//throw std::exception("Failed to write to HID device: %s", hid_error(hidDeviceHandler));
-		throw std::exception("Failed to write to HID device");
+		throw std::runtime_error("Failed to write to HID device");
 	}
 }
 
 
 size_t USBHidDevice::recieveData(std::vector<uint8_t>& data) {
 	if (!isOpen) {
-		throw std::exception("HID Device is not open for data reading.");
+		throw std::runtime_error("HID Device is not open for data reading.");
 	}
 
 	// allocate the buffer size for data reading. this is the input report size of the device.
@@ -89,7 +107,7 @@ size_t USBHidDevice::recieveData(std::vector<uint8_t>& data) {
 	size_t readSize = hid_read_timeout(hidDeviceHandler, data.data(), data.size(), readTimeOut);
 	if (readSize < 0) {
 		//throw std::exception("HID data read error %s", hid_error(hidDeviceHandler));
-		throw std::exception("HID data read error");
+		throw std::runtime_error("HID data read error");
 	}
 	// print the data.
 	return readSize;
@@ -97,11 +115,11 @@ size_t USBHidDevice::recieveData(std::vector<uint8_t>& data) {
 
 void USBHidDevice::startRecieving(const std::function<void(const std::vector<uint8_t>&)>& callback) {
 	if (isInprogress) {
-		throw std::exception("Data reading thread is already started.");
+		throw std::runtime_error("Data reading thread is already started.");
 	}
 
 	if (!isOpen) {
-		throw std::exception("Unable to start reading, device not opened");
+		throw std::runtime_error("Unable to start reading, device not opened");
 	}
 
 	dataCallback = callback;
