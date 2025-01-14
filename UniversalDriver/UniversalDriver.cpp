@@ -100,8 +100,8 @@ void appSelfhelpMenu(const std::unique_ptr<USBDeviceMonitor> dMonitor = nullptr)
 			//delete hidDevice;
 
 			std::cout << "vid: " << /*std::hex <<*/ vid << " pid: " << /*std::hex <<*/ pid << std::endl;
-			std::vector<uint8_t> command = {0x00, 0x08, 0x05, 0x00, 0x17, 0x70, 0x58, 0x02};
-			device->sendData(command);
+			//std::vector<uint8_t> command = {0x00, 0x08, 0x05, 0x00, 0x17, 0x70, 0x58, 0x02};
+			//device->sendData(command);
 			break;
 		}
 		case 6: {
@@ -119,9 +119,9 @@ void appSelfhelpMenu(const std::unique_ptr<USBDeviceMonitor> dMonitor = nullptr)
 				std::cout << "=========================================" << std::endl;
 				std::cout << "== Connect with device ==================" << std::endl;
 				std::cout << "=========================================" << std::endl;
-				std::cout << "== 1 - Beeb the device                  =" << std::endl;
-				std::cout << "== 2 - Beeb the device                  =" << std::endl;
-				std::cout << "== 3 - Tern LED OFF                     =" << std::endl;
+				std::cout << "== 1 - Double Beeb the device           =" << std::endl;
+				std::cout << "== 2 - Thriple Beeb the device          =" << std::endl;
+				//std::cout << "== 3 - Tern LED OFF                     =" << std::endl;
 				std::cout << "== 5 - Connect with device              =" << std::endl;
 				std::cout << "== 0 - Quit to main menu                =" << std::endl;
 				std::cout << "=========================================" << std::endl;
@@ -134,6 +134,18 @@ void appSelfhelpMenu(const std::unique_ptr<USBDeviceMonitor> dMonitor = nullptr)
 				case 1:
 					{
 						std::vector<unsigned char> command = {0x00, 0x08, 0x05, 0x00, 0x17, 0x70, 0x58, 0x02};
+						if(device){
+							try{
+								device->sendData(command);
+							} catch (std::exception& ex) {
+								std::cout << "Exception occurred: " << ex.what() << std::endl;
+							}
+						}
+					}					
+					break;
+				case 2:
+					{
+						std::vector<unsigned char> command = {0x00, 0x08, 0x05, 0x00, 0x17, 0x70, 0x58, 0x03};
 						if(device){
 							try{
 								device->sendData(command);
